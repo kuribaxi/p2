@@ -109,6 +109,8 @@
     align-items: center;
     flex-wrap: wrap;
     justify-content: center;
+    position: relative;
+    z-index: 5;
   }
 
   .search-box {
@@ -123,15 +125,18 @@
     font-family: 'Manrope', sans-serif;
     outline: none;
     transition: border-color 0.15s;
+    position: relative;
+    z-index: 5;
   }
 
   .search-box:focus {
     border-color: var(--gold);
   }
 
-  .search-box:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+  .search-box.vkb-active {
+    border-color: var(--gold);
+    box-shadow: 0 0 20px rgba(201, 162, 39, 0.1);
+    opacity: 0.7;
   }
 
   .search-btn {
@@ -146,6 +151,8 @@
     transition: background .15s, transform .1s;
     font-family: 'Manrope', sans-serif;
     white-space: nowrap;
+    position: relative;
+    z-index: 5;
   }
 
   .search-btn:hover {
@@ -167,6 +174,8 @@
     cursor: pointer;
     transition: all .15s;
     white-space: nowrap;
+    position: relative;
+    z-index: 5;
   }
 
   .vkb-toggle-btn:hover {
@@ -190,6 +199,8 @@
     color: var(--cream-dim);
     font-family: 'JetBrains Mono', monospace;
     flex-wrap: wrap;
+    position: relative;
+    z-index: 5;
   }
 
   .stats span {
@@ -337,6 +348,8 @@
     padding: 30px 20px 10px;
     border-top: 1px solid var(--panel-line);
     margin-top: 20px;
+    position: relative;
+    z-index: 5;
   }
 
   .footer a {
@@ -402,6 +415,7 @@
     margin: 10px auto 0;
     padding: 0 10px;
     z-index: 99991;
+    position: relative;
   }
 
   .vkb-wrap.open {
@@ -676,6 +690,23 @@
     background: var(--error);
     color: #fff;
     border-color: var(--error);
+  }
+
+  /* VKB BLOCKER - prevents focus on input and blocks physical keyboard */
+  .vkb-blocker {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 99990;
+    background: transparent;
+    cursor: default;
+  }
+
+  .vkb-blocker.active {
+    display: block;
   }
 
   /* MUSIC PLAYER */
@@ -1058,6 +1089,9 @@
   <div class="clock-date" id="clockDate">laddar...</div>
 </div>
 
+<!-- VKB BLOCKER - completely blocks focus and physical keyboard -->
+<div class="vkb-blocker" id="vkbBlocker"></div>
+
 <div class="wrap">
 
   <div class="header">
@@ -1080,7 +1114,7 @@
     </div>
   </div>
 
-  <!-- VIRTUAL KEYBOARD - Placed here so it appears below search -->
+  <!-- VIRTUAL KEYBOARD -->
   <div class="vkb-wrap" id="vkbWrap">
     <div class="vkb-panel" id="vkbPanel">
       <div class="vkb-head">
@@ -1237,6 +1271,7 @@
   var vkbClose = document.getElementById('vkbClose');
   var vkbModeBtn = document.getElementById('vkbModeBtn');
   var vkbToggleBtn = document.getElementById('vkbToggleBtn');
+  var vkbBlocker = document.getElementById('vkbBlocker');
   var searchInput = document.getElementById('searchInput');
   var vkbEnabled = false;
   var currentLang = 'en';
@@ -1321,8 +1356,6 @@
       searchInput.value = val.slice(0, start) + key + val.slice(end);
       searchInput.selectionStart = searchInput.selectionEnd = start + key.length;
     }
-    searchInput.focus();
-    // Trigger search/filter
     var event = new Event('input');
     searchInput.dispatchEvent(event);
   }
@@ -1333,12 +1366,25 @@
       vkbWrap.classList.add('open');
       vkbToggleBtn.textContent = '⌨️ VKB: PÅ';
       vkbToggleBtn.classList.add('active');
-      searchInput.focus();
+      searchInput.classList.add('vkb-active');
+      // Blur the input so TV keyboard doesn't appear
+      searchInput.blur();
+      // Add blocker to prevent any focus on input
+      vkbBlocker.classList.add('active');
       renderVkb(currentLang);
+      // Make input readonly to prevent physical keyboard
+      searchInput.setAttribute('readonly', 'readonly');
+      // Disable the input completely
+      searchInput.disabled = true;
     } else {
       vkbWrap.classList.remove('open');
       vkbToggleBtn.textContent = '⌨️ VKB: AV';
       vkbToggleBtn.classList.remove('active');
+      searchInput.classList.remove('vkb-active');
+      vkbBlocker.classList.remove('active');
+      searchInput.removeAttribute('readonly');
+      searchInput.disabled = false;
+      searchInput.focus();
     }
   }
 
@@ -1358,10 +1404,17 @@
     renderVkb(btn.dataset.lang);
   });
 
-  // Close VKB when clicking outside
-  document.addEventListener('click', function(e) {
-    if (vkbEnabled && !vkbWrap.contains(e.target) && e.target !== vkbToggleBtn && e.target !== searchInput) {
-      // Don't auto-close, user must toggle off
+  // Click on blocker does nothing - it just blocks focus
+  vkbBlocker.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  });
+
+  // Prevent any focus on input when VKB is enabled
+  searchInput.addEventListener('focus', function(e) {
+    if (vkbEnabled) {
+      e.preventDefault();
+      this.blur();
     }
   });
 
@@ -1386,7 +1439,6 @@
 
   // === WEBBPLATSER ===
   var WEBSITES = [
-    // --- Player (grön) ---
     { name: 'YesMovies', url: 'https://ww2.yesmovies.ag', icon: '🎬', type: 'player' },
     { name: 'Archive.org', url: 'https://archive.org', icon: '📁', type: 'player' },
     { name: 'WCO.tv', url: 'https://www.wcofun.net', icon: '🎞️', type: 'player' },
@@ -1397,7 +1449,6 @@
     { name: 'FlixWave', url: 'https://flixwave.online/?category=Popular&page=1', icon: '🌊', type: 'player' },
     { name: 'NostalgikTV', url: 'https://nostalgiktv.org/', icon: '📷', type: 'player' },
     { name: 'MDBMax', url: 'https://mdbmax.com/', icon: '🎬', type: 'player' },
-    // --- Ny flik (blå) ---
     { name: 'YouTube', url: 'https://www.youtube.com', icon: '▶️', type: 'newtab' },
     { name: 'Dailymotion', url: 'https://www.dailymotion.com', icon: '▶️', type: 'newtab' },
     { name: 'Odysee', url: 'https://odysee.com', icon: '🔎', type: 'newtab' },
@@ -1409,7 +1460,6 @@
     { name: 'Aparat Playlist', url: 'https://www.aparat.com/playlist/9976833/%D8%A2%D8%B3%D9%85%D8%A7%D9%86_%D8%A2%D8%A8%DB%8C_%D8%B1%D9%88%D9%85%D8%A6%D9%88', icon: '📺', type: 'newtab' },
     { name: 'Nostalgik-TV', url: 'https://nostalgik-tv.com/', icon: '📷', type: 'newtab' },
     { name: 'DIY Movies', url: 'https://www.diycraftsguide.com/movies.html', icon: '🎬', type: 'newtab' },
-    // --- Persiska (mörkröd) ---
     { name: 'Farsiland', url: 'https://farsiland.com', icon: '🇮🇷', type: 'persian' },
     { name: 'Farsiplex', url: 'https://farsiplex.com', icon: '🇮🇷', type: 'persian' },
     { name: 'Namakade', url: 'https://namakade.com/', icon: '🇮🇷', type: 'persian' },
