@@ -104,7 +104,7 @@
   .search-wrapper {
     display: flex;
     gap: 10px;
-    max-width: 600px;
+    max-width: 700px;
     margin: 16px auto 12px;
     align-items: center;
     flex-wrap: wrap;
@@ -113,7 +113,7 @@
 
   .search-box {
     flex: 1;
-    min-width: 200px;
+    min-width: 180px;
     padding: 12px 16px;
     background: rgba(255,255,255,0.04);
     border: 1px solid var(--panel-line);
@@ -397,7 +397,6 @@
   /* VIRTUAL KEYBOARD */
   .vkb-wrap {
     display: none;
-    position: relative;
     width: 100%;
     max-width: 800px;
     margin: 10px auto 0;
@@ -406,7 +405,7 @@
   }
 
   .vkb-wrap.open {
-    display: block;
+    display: block !important;
   }
 
   .vkb-panel {
@@ -603,18 +602,6 @@
   .vkb-key.back:hover {
     background: linear-gradient(180deg, #d55 0%, #c44 100%);
     border-color: #e66;
-  }
-
-  .vkb-key.hide-key {
-    background: linear-gradient(180deg, #6a5d3a 0%, #5a4d2a 100%);
-    border-color: #8a7d4a;
-    color: #e8d78a;
-    box-shadow: 0 3px 0 #3a3010, 0 4px 8px rgba(0, 0, 0, 0.3);
-  }
-
-  .vkb-key.hide-key:hover {
-    background: linear-gradient(180deg, #8a7d4a 0%, #6a5d3a 100%);
-    border-color: #aa9d5a;
   }
 
   .vkb-wrap.light .vkb-panel {
@@ -1093,6 +1080,26 @@
     </div>
   </div>
 
+  <!-- VIRTUAL KEYBOARD - Placed here so it appears below search -->
+  <div class="vkb-wrap" id="vkbWrap">
+    <div class="vkb-panel" id="vkbPanel">
+      <div class="vkb-head">
+        <div class="vkb-title">⌨️ Tangentbord</div>
+        <div class="vkb-head-right">
+          <button class="vkb-mode-btn" id="vkbModeBtn" title="Växla ljust/mörkt läge">☀️ LJUS</button>
+          <div class="vkb-close" id="vkbClose" title="Stäng">✕</div>
+        </div>
+      </div>
+      <div class="vkb-langs" id="vkbLangs">
+        <button class="vkb-lang active" data-lang="en">EN</button>
+        <button class="vkb-lang" data-lang="fa">FA</button>
+        <button class="vkb-lang" data-lang="ckb">CKB</button>
+        <button class="vkb-lang" data-lang="ar">AR</button>
+      </div>
+      <div class="vkb-rows" id="vkbRows"></div>
+    </div>
+  </div>
+
   <div id="siteContainer"></div>
 
   <div class="footer">
@@ -1100,26 +1107,6 @@
     <span style="font-size:11px;">Uppdaterad: <span id="updateDate"></span></span>
   </div>
 
-</div>
-
-<!-- VIRTUAL KEYBOARD -->
-<div class="vkb-wrap" id="vkbWrap">
-  <div class="vkb-panel" id="vkbPanel">
-    <div class="vkb-head">
-      <div class="vkb-title">Tangentbord</div>
-      <div class="vkb-head-right">
-        <button class="vkb-mode-btn" id="vkbModeBtn" title="Växla ljust/mörkt läge">☀️ LJUS</button>
-        <div class="vkb-close" id="vkbClose" title="Stäng">✕</div>
-      </div>
-    </div>
-    <div class="vkb-langs" id="vkbLangs">
-      <button class="vkb-lang active" data-lang="en">EN</button>
-      <button class="vkb-lang" data-lang="fa">FA</button>
-      <button class="vkb-lang" data-lang="ckb">CKB</button>
-      <button class="vkb-lang" data-lang="ar">AR</button>
-    </div>
-    <div class="vkb-rows" id="vkbRows"></div>
-  </div>
 </div>
 
 <!-- MUSIC PLAYER -->
@@ -1346,7 +1333,6 @@
       vkbWrap.classList.add('open');
       vkbToggleBtn.textContent = '⌨️ VKB: PÅ';
       vkbToggleBtn.classList.add('active');
-      searchInput.disabled = false;
       searchInput.focus();
       renderVkb(currentLang);
     } else {
@@ -1374,15 +1360,8 @@
 
   // Close VKB when clicking outside
   document.addEventListener('click', function(e) {
-    if (vkbEnabled && !vkbWrap.contains(e.target) && e.target !== vkbToggleBtn) {
+    if (vkbEnabled && !vkbWrap.contains(e.target) && e.target !== vkbToggleBtn && e.target !== searchInput) {
       // Don't auto-close, user must toggle off
-    }
-  });
-
-  // When search input is focused and VKB is enabled, keep it
-  searchInput.addEventListener('focus', function() {
-    if (vkbEnabled) {
-      vkbWrap.classList.add('open');
     }
   });
 
