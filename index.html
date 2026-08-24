@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kuribaxi — Streamingwebbplatser</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b1220;
+    --bg-alt: #0f1830;
+    --panel: #121b2e;
+    --panel-line: rgba(212, 175, 55, 0.16);
+    --gold: #c9a227;
+    --gold-bright: #e8c766;
+    --cream: #f3ecdd;
+    --cream-dim: #a9a290;
+    --teal: #35c6b4;
+    --green: #2f8f7f;
+    --green-light: #4ec9b0;
+    --blue: #3b82f6;
+    --blue-light: #60a5fa;
+    --error: #e2574c;
+    --radius: 14px;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: radial-gradient(700px 400px at 15% -10%, rgba(201, 162, 39, 0.10), transparent),
+                radial-gradient(900px 500px at 90% 10%, rgba(53, 198, 180, 0.06), transparent),
+                var(--bg);
+    color: var(--cream);
+    font-family: 'Manrope', sans-serif;
+    min-height: 100vh;
+    padding: 20px 0 100px;
+  }
+
+  .wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .header {
+    text-align: center;
+    padding: 30px 20px 20px;
+    border-bottom: 1px solid var(--panel-line);
+    margin-bottom: 30px;
+    background: linear-gradient(180deg, rgba(201, 162, 39, 0.06), transparent);
+  }
+
+  .header h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: clamp(28px, 5vw, 42px);
+    color: var(--cream);
+  }
+
+  .header h1 span {
+    color: var(--gold-bright);
+  }
+
+  .header p {
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--cream-dim);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+
+  .bulbs {
+    display: flex;
+    justify-content: center;
+    gap: 7px;
+    margin-bottom: 16px;
+  }
+
+  .bulb {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold-bright);
+    box-shadow: 0 0 6px 1px rgba(232, 199, 102, 0.6);
+    animation: flicker 3.2s ease-in-out infinite;
+  }
+
+  .bulb:nth-child(3n) { animation-delay: .4s; }
+  .bulb:nth-child(5n) { animation-delay: .9s; }
+  .bulb:nth-child(7n) { animation-delay: 1.4s; }
+
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .35; }
+  }
+
+  .search-box {
+    width: 100%;
+    max-width: 400px;
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--panel-line);
+    color: var(--cream);
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: 'Manrope', sans-serif;
+    outline: none;
+    margin: 16px auto 20px;
+    transition: border-color 0.15s;
+    display: block;
+  }
+
+  .search-box:focus {
+    border-color: var(--gold);
+  }
+
+  .stats {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 16px 0 24px;
+    font-size: 13px;
+    color: var(--cream-dim);
+    font-family: 'JetBrains Mono', monospace;
+    flex-wrap: wrap;
+  }
+
+  .stats span {
+    background: var(--panel);
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--panel-line);
+  }
+
+  .stats strong {
+    color: var(--gold-bright);
+  }
+
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--gold-bright);
+    margin: 30px 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--panel-line);
+  }
+
+  .section-title .badge {
+    font-size: 12px;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 400;
+    color: var(--cream-dim);
+    background: var(--panel);
+    padding: 2px 12px;
+    border-radius: 20px;
+    margin-left: 10px;
+  }
+
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin-bottom: 30px;
+  }
+
+  .site-card {
+    background: var(--panel);
+    border: 1px solid var(--panel-line);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    color: var(--cream);
+  }
+
+  .site-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  }
+
+  .site-card.player {
+    border-left: 4px solid var(--green-light);
+  }
+
+  .site-card.player:hover {
+    border-left-color: var(--gold);
+  }
+
+  .site-card.newtab {
+    border-left: 4px solid var(--blue-light);
+  }
+
+  .site-card.newtab:hover {
+    border-left-color: var(--gold);
+  }
+
+  .site-card.persian {
+    border-left: 4px solid #cc5555;
+  }
+
+  .site-card.persian:hover {
+    border-left-color: var(--gold);
+  }
+
+  .site-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+    width: 40px;
+    text-align: center;
+  }
+
+  .site-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .site-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--cream);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .site-type {
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--cream-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-top: 2px;
+  }
+
+  .site-type .dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-right: 4px;
+  }
+
+  .site-type .dot.green { background: var(--green-light); }
+  .site-type .dot.blue { background: var(--blue-light); }
+  .site-type .dot.red { background: #cc5555; }
+
+  .site-arrow {
+    font-size: 18px;
+    color: var(--cream-dim);
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .site-card:hover .site-arrow {
+    color: var(--gold-bright);
+    transform: translateX(3px);
+  }
+
+  .footer {
+    text-align: center;
+    font-size: 12px;
+    color: var(--cream-dim);
+    opacity: 0.6;
+    padding: 30px 20px 10px;
+    border-top: 1px solid var(--panel-line);
+    margin-top: 20px;
+  }
+
+  .footer a {
+    color: var(--gold-bright);
+    text-decoration: none;
+  }
+
+  .clock-badge {
+    position: fixed;
+    top: 14px;
+    right: 14px;
+    z-index: 9999;
+    background: rgba(18, 27, 46, 0.92);
+    border: 1px solid var(--panel-line);
+    border-radius: 12px;
+    padding: 8px 12px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(201, 162, 39, 0.08) inset;
+    pointer-events: none;
+    text-align: right;
+    min-width: 118px;
+  }
+
+  .clock-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--gold-bright);
+    line-height: 1;
+    letter-spacing: 0.02em;
+  }
+
+  .clock-date {
+    font-family: 'Manrope', sans-serif;
+    font-size: 10.5px;
+    color: var(--cream-dim);
+    margin-top: 3px;
+    text-transform: capitalize;
+    line-height: 1.2;
+  }
+
+  .clock-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+    display: inline-block;
+    margin-right: 6px;
+    box-shadow: 0 0 6px var(--teal);
+    animation: blink 1.5s infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+
+  /* MUSIC PLAYER */
+  .music-player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9998;
+    background: rgba(11, 18, 32, 0.97);
+    border-top: 1px solid var(--panel-line);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: transform .3s ease, opacity .3s ease;
+  }
+
+  .music-player.hidden-player {
+    transform: translateY(100%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .music-player-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .music-play-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: none;
+    color: #1a1305;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all .15s;
+    font-size: 16px;
+  }
+
+  .music-play-btn:hover {
+    background: var(--gold-bright);
+    transform: scale(1.05);
+  }
+
+  .music-track-info {
+    min-width: 0;
+  }
+
+  .music-track-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--cream);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+  }
+
+  .music-track-station {
+    font-size: 10px;
+    color: var(--cream-dim);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .music-player-center {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .music-volume {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .music-volume input[type=range] {
+    width: 80px;
+    height: 3px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--panel-line);
+    border-radius: 2px;
+    outline: none;
+  }
+
+  .music-volume input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--gold);
+    cursor: pointer;
+  }
+
+  .music-volume input[type=range]::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--gold);
+    cursor: pointer;
+    border: none;
+  }
+
+  .music-visualizer {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 20px;
+  }
+
+  .music-bar {
+    width: 3px;
+    background: var(--gold-bright);
+    border-radius: 2px;
+    animation: music-bounce 1s ease-in-out infinite;
+  }
+
+  .music-bar:nth-child(1) { height: 6px; animation-delay: 0s; }
+  .music-bar:nth-child(2) { height: 12px; animation-delay: .1s; }
+  .music-bar:nth-child(3) { height: 8px; animation-delay: .2s; }
+  .music-bar:nth-child(4) { height: 14px; animation-delay: .15s; }
+  .music-bar:nth-child(5) { height: 10px; animation-delay: .05s; }
+  .music-bar:nth-child(6) { height: 16px; animation-delay: .25s; }
+  .music-bar:nth-child(7) { height: 7px; animation-delay: .1s; }
+
+  @keyframes music-bounce {
+    0%, 100% { transform: scaleY(1); }
+    50% { transform: scaleY(0.4); }
+  }
+
+  .music-player.paused .music-bar {
+    animation-play-state: paused;
+    opacity: 0.3;
+  }
+
+  .music-station-select {
+    background: #0b1220;
+    border: 1px solid var(--panel-line);
+    color: var(--cream);
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    cursor: pointer;
+    outline: none;
+    max-width: 160px;
+  }
+
+  .music-station-select option {
+    background: #0b1220;
+    color: var(--cream);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+
+  .music-station-select:focus {
+    border-color: var(--gold);
+  }
+
+  .music-player-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .music-mute-btn {
+    background: transparent;
+    border: 1px solid var(--panel-line);
+    color: var(--cream-dim);
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-size: 11px;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    transition: all .15s;
+  }
+
+  .music-mute-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold-bright);
+  }
+
+  .music-close-btn {
+    background: transparent;
+    border: 1px solid var(--panel-line);
+    color: var(--cream-dim);
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-size: 11px;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    transition: all .15s;
+  }
+
+  .music-close-btn:hover {
+    border-color: var(--error);
+    color: var(--error);
+  }
+
+  .music-reopen-btn {
+    position: fixed;
+    bottom: 14px;
+    right: 14px;
+    z-index: 9997;
+    background: var(--gold);
+    color: #1a1305;
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(201, 162, 39, 0.3);
+    transition: all .15s;
+    font-size: 18px;
+  }
+
+  .music-reopen-btn:hover {
+    background: var(--gold-bright);
+    transform: scale(1.05);
+  }
+
+  .music-reopen-btn.show {
+    display: flex;
+  }
+
+  .music-unmute-hint {
+    position: fixed;
+    bottom: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9996;
+    background: var(--panel);
+    border: 1px solid var(--gold);
+    border-radius: 20px;
+    padding: 8px 18px;
+    font-size: 12px;
+    color: var(--gold-bright);
+    display: none;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    animation: hint-bounce 2s infinite;
+  }
+
+  .music-unmute-hint.show {
+    display: block;
+  }
+
+  @keyframes hint-bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-4px); }
+  }
+
+  /* Copy feedback */
+  .copy-feedback {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--gold);
+    color: #1a1305;
+    padding: 10px 24px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 99999;
+    pointer-events: none;
+  }
+
+  .copy-feedback.show {
+    opacity: 1;
+  }
+
+  @media (max-width: 700px) {
+    .music-player {
+      flex-wrap: wrap;
+      padding: 8px 12px;
+      gap: 8px;
+    }
+    .music-track-title {
+      max-width: 120px;
+    }
+    .music-volume input[type=range] {
+      width: 50px;
+    }
+    .music-station-select {
+      max-width: 120px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .clock-badge {
+      top: 14px;
+      left: 12px;
+      right: auto;
+      bottom: auto;
+      padding: 7px 10px;
+      min-width: 102px;
+    }
+    .clock-time { font-size: 13.5px; }
+    .clock-date { font-size: 9.5px; }
+    .site-grid {
+      grid-template-columns: 1fr;
+    }
+    .stats {
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+    }
+  }
+
+  @media (min-width: 601px) and (max-width: 900px) {
+    .site-grid {
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--bg);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--panel-line);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--gold);
+  }
+</style>
+</head>
+<body>
+
+<div class="clock-badge" id="clockBadge">
+  <div class="clock-time"><span class="clock-dot"></span><span id="clockTime">--:--:--</span></div>
+  <div class="clock-date" id="clockDate">laddar...</div>
+</div>
+
+<div class="wrap">
+
+  <div class="header">
+    <div class="bulbs" id="bulbs"></div>
+    <h1>📺 <span>Streamingwebbplatser</span></h1>
+    <p>En samling av streamingtjänster för film och TV-serier.<br>
+    <span style="font-size:13px;color:var(--cream-dim);">Klicka på en webbplats för att öppna den i en ny flik.</span></p>
+    <input type="text" class="search-box" id="searchInput" placeholder="🔍 Sök bland webbplatser...">
+    <div class="stats">
+      <span>🎬 <strong id="playerCount">0</strong> Spelare</span>
+      <span>📂 <strong id="newtabCount">0</strong> Ny flik</span>
+      <span>🇮🇷 <strong id="persianCount">0</strong> Persiska</span>
+      <span>📦 <strong id="totalCount">0</strong> Totalt</span>
+    </div>
+  </div>
+
+  <div id="siteContainer"></div>
+
+  <div class="footer">
+    🎥 Kuribaxi Streaming Guide &bull; Webbplatserna öppnas i en ny flik.<br>
+    <span style="font-size:11px;">Uppdaterad: <span id="updateDate"></span></span>
+  </div>
+
+</div>
+
+<!-- MUSIC PLAYER -->
+<div class="music-player paused" id="musicPlayer">
+  <div class="music-player-left">
+    <button class="music-play-btn" id="musicPlayBtn" title="Spela/Pausa">▶</button>
+    <div class="music-track-info">
+      <div class="music-track-title" id="musicTrackTitle">Klassisk Radio</div>
+      <div class="music-track-station" id="musicTrackStation">Välj kanal & klicka Spela</div>
+    </div>
+  </div>
+  <div class="music-player-center">
+    <div class="music-visualizer" id="musicVisualizer">
+      <div class="music-bar"></div>
+      <div class="music-bar"></div>
+      <div class="music-bar"></div>
+      <div class="music-bar"></div>
+      <div class="music-bar"></div>
+      <div class="music-bar"></div>
+      <div class="music-bar"></div>
+    </div>
+    <select class="music-station-select" id="musicStationSelect">
+      <option value="0">Radio Swiss Classic</option>
+      <option value="1">Public Domain Classical</option>
+      <option value="2">Classic FM UK</option>
+      <option value="3">Adagio.FM</option>
+      <option value="4">DR P2 Klassik</option>
+      <option value="5">NPO Radio 4</option>
+      <option value="6">Venice Classic Radio</option>
+      <option value="7">Radio Caprice Cello</option>
+      <option value="8">Baroque Sonatas</option>
+      <option value="9">WQXR Classical</option>
+      <option value="10">Colorado Public Radio</option>
+      <option value="11">WWFM Classical</option>
+      <option value="12">Classic Praha</option>
+      <option value="13">Radio Paradise Mellow</option>
+      <option value="14">Linn Classical</option>
+      <option value="15">YourClassical Relax</option>
+      <option value="16">BBC Radio 3</option>
+      <option value="17">France Musique</option>
+      <option value="18">Klassik Radio</option>
+      <option value="19">Sonatica</option>
+      <option value="20">CMBF Radio Musical</option>
+      <option value="21">Maine Public Classical</option>
+      <option value="22">Vermont Public Classical</option>
+      <option value="23">Yellowstone Classical</option>
+      <option value="24">Northwest Public Classical</option>
+      <option value="25">Minnesota Public Choral</option>
+      <option value="26">WFCC Cape Classical</option>
+      <option value="27">KANO Hawaii Classical</option>
+      <option value="28">Classical 89 BYU</option>
+      <option value="29">ClassicalNH</option>
+    </select>
+    <div class="music-volume">
+      <span style="font-size:12px;color:var(--cream-dim);">🔊</span>
+      <input type="range" id="musicVolume" min="0" max="100" value="70">
+    </div>
+  </div>
+  <div class="music-player-right">
+    <button class="music-mute-btn" id="musicMuteBtn">LJUD AV</button>
+    <button class="music-close-btn" id="musicCloseBtn">STÄNG</button>
+  </div>
+  <audio id="musicAudio" crossorigin="anonymous"></audio>
+</div>
+
+<div class="music-unmute-hint" id="musicUnmuteHint">🔊 Klicka Spela för att starta musiken</div>
+<button class="music-reopen-btn" id="musicReopenBtn" title="Visa musikspelaren">🎵</button>
+
+<!-- Copy feedback -->
+<div class="copy-feedback" id="copyFeedback">✅ URL kopierad!</div>
+
+<script>
+(function() {
+  // === KLOCKA ===
+  function updateClock() {
+    var now = new Date();
+    var timeStr = now.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    var dateStr = now.toLocaleDateString('sv-SE', { weekday: 'long', day: 'numeric', month: 'long' });
+    document.getElementById('clockTime').textContent = timeStr;
+    document.getElementById('clockDate').textContent = dateStr;
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // === GLÖDLAMPOR ===
+  var bulbsEl = document.getElementById('bulbs');
+  for (var i = 0; i < 26; i++) {
+    var b = document.createElement('div');
+    b.className = 'bulb';
+    bulbsEl.appendChild(b);
+  }
+
+  // === WEBBPLATSER ===
+  var WEBSITES = [
+    // --- Player (grön) ---
+    { name: 'YesMovies', url: 'https://ww2.yesmovies.ag', icon: '🎬', type: 'player' },
+    { name: 'Archive.org', url: 'https://archive.org', icon: '📁', type: 'player' },
+    { name: 'WCO.tv', url: 'https://www.wcofun.net', icon: '🎞️', type: 'player' },
+    { name: 'Solarmovie', url: 'https://vvw2.solarmovie.ma/home', icon: '🎬', type: 'player' },
+    { name: 'WatchSeries', url: 'https://watchseries.bar/home', icon: '📺', type: 'player' },
+    { name: 'NitesTV', url: 'https://nitestv.org/', icon: '🌙', type: 'player' },
+    { name: 'StreamM4U', url: 'https://streamm4u.vip/', icon: '🎬', type: 'player' },
+    { name: 'FlixWave', url: 'https://flixwave.online/?category=Popular&page=1', icon: '🌊', type: 'player' },
+    { name: 'NostalgikTV', url: 'https://nostalgiktv.org/', icon: '📷', type: 'player' },
+    { name: 'MDBMax', url: 'https://mdbmax.com/', icon: '🎬', type: 'player' },
+    // --- Ny flik (blå) ---
+    { name: 'YouTube', url: 'https://www.youtube.com', icon: '▶️', type: 'newtab' },
+    { name: 'Dailymotion', url: 'https://www.dailymotion.com', icon: '▶️', type: 'newtab' },
+    { name: 'Odysee', url: 'https://odysee.com', icon: '🔎', type: 'newtab' },
+    { name: 'Twitch', url: 'https://www.twitch.tv', icon: '📺', type: 'newtab' },
+    { name: 'Soap2Day', url: 'https://soap2days.help/home/', icon: '🧼', type: 'newtab' },
+    { name: 'AniWatch', url: 'https://aniwatch.co.at/', icon: '🎞️', type: 'newtab' },
+    { name: 'GIA TV', url: 'https://gia.tv/live.php', icon: '📺', type: 'newtab' },
+    { name: 'FreeClassicMovies', url: 'https://freeclassicmovies.tv/', icon: '🎬', type: 'newtab' },
+    { name: 'Aparat Playlist', url: 'https://www.aparat.com/playlist/9976833/%D8%A2%D8%B3%D9%85%D8%A7%D9%86_%D8%A2%D8%A8%DB%8C_%D8%B1%D9%88%D9%85%D8%A6%D9%88', icon: '📺', type: 'newtab' },
+    { name: 'Nostalgik-TV', url: 'https://nostalgik-tv.com/', icon: '📷', type: 'newtab' },
+    { name: 'DIY Movies', url: 'https://www.diycraftsguide.com/movies.html', icon: '🎬', type: 'newtab' },
+    // --- Persiska (mörkröd) ---
+    { name: 'Farsiland', url: 'https://farsiland.com', icon: '🇮🇷', type: 'persian' },
+    { name: 'Farsiplex', url: 'https://farsiplex.com', icon: '🇮🇷', type: 'persian' },
+    { name: 'Namakade', url: 'https://namakade.com/', icon: '🇮🇷', type: 'persian' },
+    { name: 'Farsi4HD', url: 'https://www.farsi4hd.com/', icon: '🇮🇷', type: 'persian' },
+    { name: 'IMVBox', url: 'https://www.imvbox.com/en', icon: '🇮🇷', type: 'persian' },
+    { name: 'Kurdbin', url: 'https://kurdbin.kurdsat.tv/', icon: '🇮🇷', type: 'persian' },
+    { name: 'Enama', url: 'https://enama.ir/', icon: '🇮🇷', type: 'persian' },
+    { name: 'PersianHive', url: 'https://persianhive.com/home17/', icon: '🇮🇷', type: 'persian' },
+    { name: 'IspanChannel', url: 'https://ispanechannel.it.com/', icon: '🇮🇷', type: 'persian' },
+    { name: 'Y-Drama', url: 'https://www.y-drama.net/', icon: '🇮🇷', type: 'persian' },
+    { name: 'Farshub', url: 'https://monclerjakkejacket.com/farshub-2/', icon: '🇮🇷', type: 'persian' },
+  ];
+
+  // Sortera: Player först, sedan New tab, sedan Persiska
+  var typeOrder = { player: 0, newtab: 1, persian: 2 };
+  WEBSITES.sort(function(a, b) {
+    return typeOrder[a.type] - typeOrder[b.type];
+  });
+
+  var typeLabels = {
+    player: 'Spelare',
+    newtab: 'Öppnas i ny flik',
+    persian: 'Persiska'
+  };
+
+  var typeDots = {
+    player: 'green',
+    newtab: 'blue',
+    persian: 'red'
+  };
+
+  // Räkna per typ
+  var counts = { player: 0, newtab: 0, persian: 0 };
+  WEBSITES.forEach(function(site) {
+    counts[site.type] = (counts[site.type] || 0) + 1;
+  });
+
+  document.getElementById('playerCount').textContent = counts.player;
+  document.getElementById('newtabCount').textContent = counts.newtab;
+  document.getElementById('persianCount').textContent = counts.persian;
+  document.getElementById('totalCount').textContent = WEBSITES.length;
+
+  // Sätt uppdateringsdatum
+  document.getElementById('updateDate').textContent = new Date().toLocaleDateString('sv-SE', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  // Bygg webbplatserna
+  var container = document.getElementById('siteContainer');
+
+  function renderSites(type) {
+    var filtered = WEBSITES.filter(function(s) { return s.type === type; });
+    if (filtered.length === 0) return;
+
+    var section = document.createElement('div');
+    var title = document.createElement('h2');
+    title.className = 'section-title';
+    var label = typeLabels[type] || type;
+    var emoji = type === 'player' ? '▶️' : type === 'newtab' ? '🔗' : '🇮🇷';
+    title.innerHTML = emoji + ' ' + label + ' <span class="badge">' + filtered.length + ' st</span>';
+    section.appendChild(title);
+
+    var grid = document.createElement('div');
+    grid.className = 'site-grid';
+
+    filtered.forEach(function(site) {
+      var card = document.createElement('div');
+      card.className = 'site-card ' + site.type;
+
+      var icon = document.createElement('div');
+      icon.className = 'site-icon';
+      icon.textContent = site.icon;
+
+      var info = document.createElement('div');
+      info.className = 'site-info';
+
+      var name = document.createElement('div');
+      name.className = 'site-name';
+      name.textContent = site.name;
+
+      var typeEl = document.createElement('div');
+      typeEl.className = 'site-type';
+      var dotColor = typeDots[site.type] || 'green';
+      typeEl.innerHTML = '<span class="dot ' + dotColor + '"></span>' + (typeLabels[site.type] || site.type);
+
+      info.appendChild(name);
+      info.appendChild(typeEl);
+
+      var arrow = document.createElement('div');
+      arrow.className = 'site-arrow';
+      arrow.textContent = '↗';
+
+      card.appendChild(icon);
+      card.appendChild(info);
+      card.appendChild(arrow);
+
+      // Klicka för att öppna i ny flik
+      card.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.open(site.url, '_blank', 'noopener,noreferrer');
+      });
+
+      // Högerklicka för att kopiera URL
+      card.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        navigator.clipboard.writeText(site.url).then(function() {
+          var feedback = document.getElementById('copyFeedback');
+          feedback.textContent = '✅ ' + site.name + ' - URL kopierad!';
+          feedback.classList.add('show');
+          setTimeout(function() {
+            feedback.classList.remove('show');
+          }, 2000);
+        }).catch(function() {
+          var textarea = document.createElement('textarea');
+          textarea.value = site.url;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+          var feedback = document.getElementById('copyFeedback');
+          feedback.textContent = '✅ ' + site.name + ' - URL kopierad!';
+          feedback.classList.add('show');
+          setTimeout(function() {
+            feedback.classList.remove('show');
+          }, 2000);
+        });
+      });
+
+      card.title = 'Vänsterklicka = Öppna i ny flik | Högerklicka = Kopiera URL';
+
+      grid.appendChild(card);
+    });
+
+    section.appendChild(grid);
+    container.appendChild(section);
+  }
+
+  // Rendera i ordning
+  renderSites('player');
+  renderSites('newtab');
+  renderSites('persian');
+
+  // Sökfunktion
+  var searchInput = document.getElementById('searchInput');
+  searchInput.addEventListener('input', function() {
+    var query = this.value.toLowerCase().trim();
+    var cards = document.querySelectorAll('.site-card');
+    var sections = document.querySelectorAll('.section-title');
+    var grids = document.querySelectorAll('.site-grid');
+
+    cards.forEach(function(card) {
+      var name = card.querySelector('.site-name').textContent.toLowerCase();
+      var match = name.includes(query);
+      card.style.display = match ? 'flex' : 'none';
+    });
+
+    grids.forEach(function(grid) {
+      var visibleCards = grid.querySelectorAll('.site-card[style*="display: flex"]');
+      var section = grid.parentElement;
+      var title = section.querySelector('.section-title');
+      if (title) {
+        title.style.display = visibleCards.length > 0 ? 'block' : 'none';
+      }
+      section.style.display = visibleCards.length > 0 ? 'block' : 'none';
+    });
+  });
+
+  // === MUSIC PLAYER ===
+  var MUSIC_STATIONS = [
+    {name:'Radio Swiss Classic',url:'https://stream.srg-ssr.ch/m/rsc_de/mp3_128',desc:'Schweizisk klassisk radio'},
+    {name:'Public Domain Classical',url:'http://relay.publicdomainradio.org/classical.mp3',desc:'Offentlig doman klassisk musik'},
+    {name:'Classic FM UK',url:'http://vis.media-ice.musicradio.com/ClassicFMMP3',desc:'Storbritanniens favorit'},
+    {name:'Adagio.FM',url:'http://hi5.adagio.fm/;',desc:'Lugn klassisk musik'},
+    {name:'DR P2 Klassik',url:'http://live-icy.gss.dr.dk:8000/A/A04L.mp3',desc:'Dansk klassisk radio'},
+    {name:'NPO Radio 4',url:'https://icecast.omroep.nl/radio4-bb-mp3',desc:'Nederlandsk klassisk'},
+    {name:'Venice Classic Radio',url:'https://uk2.streamingpulse.com/ssl/vcr2',desc:'Italiensk barock & klassisk'},
+    {name:'Radio Caprice Cello',url:'http://79.120.12.130:8002/cello',desc:'Cellomusik nonstop'},
+    {name:'Baroque Sonatas',url:'https://stream.laut.fm/baroque_sonatas_radio',desc:'Barocksonater'},
+    {name:'WQXR Classical',url:'https://stream.wqxr.org/wqxr-web',desc:'New York klassisk'},
+    {name:'Colorado Public Radio',url:'https://stream1.cprnetwork.org/cpr2_lo',desc:'Colorado klassisk'},
+    {name:'WWFM Classical',url:'https://wwfm.streamguys1.com/live',desc:'New Jersey klassisk'},
+    {name:'Classic Praha',url:'http://icecast8.play.cz/classic128.mp3',desc:'Tjeckisk klassisk & film'},
+    {name:'Radio Paradise Mellow',url:'https://stream.radioparadise.com/mellow-320',desc:'Lugn varldsmusik'},
+    {name:'Linn Classical',url:'http://89.16.185.174:8004/stream',desc:'Skotsk Hi-Fi klassisk'},
+    {name:'YourClassical Relax',url:'https://relax.stream.publicradio.org/relax.aac',desc:'Avslappnande klassisk'},
+    {name:'BBC Radio 3',url:'https://stream.live.vc.bbcmedia.co.uk/bbc_radio_three',desc:'BBC klassisk & kultur'},
+    {name:'France Musique',url:'https://direct.francemusique.fr/live/francemusique-midfi.mp3',desc:'Fransk klassisk radio'},
+    {name:'Klassik Radio',url:'https://live.streams.klassikradio.de/klassikradio-deutschland',desc:'Tysk klassisk radio'},
+    {name:'Sonatica',url:'http://148.251.43.231:8742/160;.mp3',desc:'Klassisk musik 24/7'},
+    {name:'CMBF Radio Musical',url:'https://icecast.teveo.cu/Nbtz7HT3',desc:'Kubansk kultur & klassisk'},
+    {name:'Maine Public Classical',url:'https://playerservices.streamtheworld.com/api/livestream-redirect/WMEA_CLASSICAL.mp3',desc:'Maine klassisk'},
+    {name:'Vermont Public Classical',url:'https://vprclassical.streamguys1.com/vprclassical-web',desc:'Vermont klassisk'},
+    {name:'Yellowstone Classical',url:'https://ypr.streamguys1.com/live-2',desc:'Montana klassisk'},
+    {name:'Northwest Public Classical',url:'https://streams.nwpr.org:8443/NWPRCLASSICAL',desc:'Washington klassisk'},
+    {name:'Minnesota Public Choral',url:'https://choral.stream.publicradio.org/choral.aac',desc:'Kormusik'},
+    {name:'WFCC Cape Classical',url:'https://ice7.securenetsystems.net/WFCC',desc:'Cape Cod klassisk'},
+    {name:'KANO Hawaii Classical',url:'https://khpr-ice.streamguys1.com/kipo2',desc:'Hawaii klassisk'},
+    {name:'Classical 89 BYU',url:'https://radio.byub.org/classical89/classical89_aac',desc:'Utah klassisk'},
+    {name:'ClassicalNH',url:'https://nhpr.streamguys1.com/classical',desc:'New Hampshire klassisk'},
+  ];
+
+  var musicAudio = document.getElementById('musicAudio');
+  var musicPlayBtn = document.getElementById('musicPlayBtn');
+  var musicStationSelect = document.getElementById('musicStationSelect');
+  var musicVolume = document.getElementById('musicVolume');
+  var musicMuteBtn = document.getElementById('musicMuteBtn');
+  var musicCloseBtn = document.getElementById('musicCloseBtn');
+  var musicReopenBtn = document.getElementById('musicReopenBtn');
+  var musicPlayer = document.getElementById('musicPlayer');
+  var musicTrackTitle = document.getElementById('musicTrackTitle');
+  var musicTrackStation = document.getElementById('musicTrackStation');
+  var musicUnmuteHint = document.getElementById('musicUnmuteHint');
+  var currentStation = parseInt(localStorage.getItem('kuribaxi_music_station') || '0');
+  var isPlaying = false;
+  var isMuted = false;
+
+  function loadStation(index) {
+    var st = MUSIC_STATIONS[index];
+    if (!st) return;
+    musicAudio.src = st.url;
+    musicTrackTitle.textContent = st.name;
+    musicTrackStation.textContent = st.desc;
+    musicStationSelect.value = String(index);
+    localStorage.setItem('kuribaxi_music_station', String(index));
+    if (isPlaying) {
+      musicAudio.play().catch(function(e) { console.log('Play error', e); });
+    }
+  }
+
+  function togglePlay() {
+    if (musicAudio.paused) {
+      musicAudio.play().then(function() {
+        isPlaying = true;
+        musicPlayBtn.innerHTML = '⏸';
+        musicPlayer.classList.remove('paused');
+        musicUnmuteHint.classList.remove('show');
+      }).catch(function(err) {
+        console.log('Audio play failed:', err);
+        musicTrackStation.textContent = 'Kunde inte spela. Prova annan kanal.';
+      });
+    } else {
+      musicAudio.pause();
+      isPlaying = false;
+      musicPlayBtn.innerHTML = '▶';
+      musicPlayer.classList.add('paused');
+    }
+  }
+
+  function setVolume(v) {
+    musicAudio.volume = v / 100;
+    if (v > 0 && isMuted) {
+      isMuted = false;
+      musicMuteBtn.textContent = 'LJUD AV';
+      musicAudio.muted = false;
+    }
+  }
+
+  function toggleMute() {
+    if (isMuted) {
+      musicAudio.muted = false;
+      isMuted = false;
+      musicMuteBtn.textContent = 'LJUD AV';
+    } else {
+      musicAudio.muted = true;
+      isMuted = true;
+      musicMuteBtn.textContent = 'LJUD PÅ';
+    }
+  }
+
+  function closePlayer() {
+    musicAudio.pause();
+    isPlaying = false;
+    musicPlayBtn.innerHTML = '▶';
+    musicPlayer.classList.add('hidden-player');
+    musicReopenBtn.classList.add('show');
+    musicUnmuteHint.classList.remove('show');
+  }
+
+  function reopenPlayer() {
+    musicPlayer.classList.remove('hidden-player');
+    musicReopenBtn.classList.remove('show');
+  }
+
+  musicPlayBtn.addEventListener('click', togglePlay);
+  musicStationSelect.addEventListener('change', function() {
+    loadStation(parseInt(this.value));
+    if (isPlaying) togglePlay();
+  });
+  musicVolume.addEventListener('input', function() {
+    setVolume(parseInt(this.value));
+    localStorage.setItem('kuribaxi_music_vol', this.value);
+  });
+  musicMuteBtn.addEventListener('click', toggleMute);
+  musicCloseBtn.addEventListener('click', closePlayer);
+  musicReopenBtn.addEventListener('click', reopenPlayer);
+
+  musicAudio.addEventListener('error', function() {
+    musicTrackStation.textContent = 'Fel vid laddning, byter kanal...';
+    setTimeout(function() {
+      var next = (currentStation + 1) % MUSIC_STATIONS.length;
+      currentStation = next;
+      loadStation(next);
+      if (isPlaying) musicAudio.play().catch(function() {});
+    }, 2000);
+  });
+
+  musicAudio.addEventListener('playing', function() {
+    musicTrackStation.textContent = MUSIC_STATIONS[currentStation].desc;
+  });
+
+  // Init music
+  loadStation(currentStation);
+  musicVolume.value = parseInt(localStorage.getItem('kuribaxi_music_vol') || '70');
+  setVolume(parseInt(musicVolume.value));
+
+  setTimeout(function() {
+    if (!isPlaying) {
+      musicUnmuteHint.classList.add('show');
+    }
+  }, 1500);
+
+})();
+</script>
+
+</body>
+</html>
