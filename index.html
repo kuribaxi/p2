@@ -38,7 +38,7 @@
     color: var(--cream);
     font-family: 'Manrope', sans-serif;
     min-height: 100vh;
-    padding: 20px 0 100px;
+    padding: 20px 0 120px;
   }
 
   .wrap {
@@ -101,9 +101,19 @@
     50% { opacity: .35; }
   }
 
+  .search-wrapper {
+    display: flex;
+    gap: 10px;
+    max-width: 600px;
+    margin: 16px auto 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
   .search-box {
-    width: 100%;
-    max-width: 400px;
+    flex: 1;
+    min-width: 200px;
     padding: 12px 16px;
     background: rgba(255,255,255,0.04);
     border: 1px solid var(--panel-line);
@@ -112,13 +122,63 @@
     font-size: 14px;
     font-family: 'Manrope', sans-serif;
     outline: none;
-    margin: 16px auto 20px;
     transition: border-color 0.15s;
-    display: block;
   }
 
   .search-box:focus {
     border-color: var(--gold);
+  }
+
+  .search-box:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .search-btn {
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 12px 24px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background .15s, transform .1s;
+    font-family: 'Manrope', sans-serif;
+    white-space: nowrap;
+  }
+
+  .search-btn:hover {
+    background: var(--blue-light);
+  }
+
+  .search-btn:active {
+    transform: scale(0.98);
+  }
+
+  .vkb-toggle-btn {
+    background: var(--panel);
+    border: 1px solid var(--panel-line);
+    color: var(--cream-dim);
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    cursor: pointer;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+
+  .vkb-toggle-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold-bright);
+  }
+
+  .vkb-toggle-btn.active {
+    background: var(--gold);
+    color: #1a1305;
+    border-color: var(--gold);
+    font-weight: 700;
   }
 
   .stats {
@@ -332,6 +392,303 @@
   @keyframes blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.35; }
+  }
+
+  /* VIRTUAL KEYBOARD */
+  .vkb-wrap {
+    display: none;
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    margin: 10px auto 0;
+    padding: 0 10px;
+    z-index: 99991;
+  }
+
+  .vkb-wrap.open {
+    display: block;
+  }
+
+  .vkb-panel {
+    width: 100%;
+    background: #3a3d42;
+    border: 2px solid #4a4d52;
+    border-radius: 16px;
+    padding: 14px 16px 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+
+  .vkb-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .vkb-title {
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--gold-bright);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+  }
+
+  .vkb-head-right {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .vkb-mode-btn {
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 4px 10px;
+    border-radius: 8px;
+    border: 2px solid #4a4d52;
+    background: #4a4d52;
+    color: #e0e0e5;
+    cursor: pointer;
+    transition: all .15s;
+    font-weight: 600;
+  }
+
+  .vkb-mode-btn:hover {
+    background: #5a5d62;
+    color: #fff;
+  }
+
+  .vkb-close {
+    width: 22px;
+    height: 22px;
+    border-radius: 8px;
+    background: #4a4d52;
+    border: 2px solid #5a5d62;
+    color: #e0e0e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    transition: all .15s;
+  }
+
+  .vkb-close:hover {
+    background: var(--error);
+    color: #fff;
+    border-color: var(--error);
+  }
+
+  .vkb-langs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+
+  .vkb-lang {
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 4px 10px;
+    border-radius: 8px;
+    border: 2px solid #4a4d52;
+    background: #4a4d52;
+    color: #e0e0e5;
+    cursor: pointer;
+    transition: all .15s;
+    font-weight: 600;
+  }
+
+  .vkb-lang:hover {
+    background: #5a5d62;
+    color: #fff;
+    border-color: #6a6d72;
+  }
+
+  .vkb-lang.active {
+    background: var(--gold);
+    color: #1a1305;
+    border-color: var(--gold);
+    font-weight: 700;
+  }
+
+  .vkb-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .vkb-row {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+  }
+
+  .vkb-key {
+    min-width: 38px;
+    height: 30px;
+    padding: 0 6px;
+    background: linear-gradient(180deg, #5a5d62 0%, #4a4d52 100%);
+    border: 2px solid #6a6d72;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'Manrope', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+    user-select: none;
+    flex: 1;
+    box-shadow: 0 3px 0 #3a3d42, 0 4px 8px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .vkb-key::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 35%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), transparent);
+    border-radius: 6px 6px 0 0;
+    pointer-events: none;
+  }
+
+  .vkb-key:hover {
+    background: linear-gradient(180deg, #6a6d72 0%, #5a5d62 100%);
+    border-color: #8a8d92;
+  }
+
+  .vkb-key:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #3a3d42, 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .vkb-key.wide {
+    min-width: 55px;
+    flex: 1.5;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .vkb-key.space {
+    flex: 4;
+  }
+
+  .vkb-key.enter {
+    background: linear-gradient(180deg, #3cb371 0%, #2e8b57 100%);
+    border-color: #4cd581;
+    color: #fff;
+    box-shadow: 0 3px 0 #1e6b3a, 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .vkb-key.enter:hover {
+    background: linear-gradient(180deg, #4cd581 0%, #3cb371 100%);
+    border-color: #5ce591;
+  }
+
+  .vkb-key.back {
+    background: linear-gradient(180deg, #c44 0%, #a33 100%);
+    border-color: #d55;
+    color: #fff;
+    box-shadow: 0 3px 0 #822, 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .vkb-key.back:hover {
+    background: linear-gradient(180deg, #d55 0%, #c44 100%);
+    border-color: #e66;
+  }
+
+  .vkb-key.hide-key {
+    background: linear-gradient(180deg, #6a5d3a 0%, #5a4d2a 100%);
+    border-color: #8a7d4a;
+    color: #e8d78a;
+    box-shadow: 0 3px 0 #3a3010, 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .vkb-key.hide-key:hover {
+    background: linear-gradient(180deg, #8a7d4a 0%, #6a5d3a 100%);
+    border-color: #aa9d5a;
+  }
+
+  .vkb-wrap.light .vkb-panel {
+    background: #d4d6da;
+    border-color: #b4b6ba;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  }
+
+  .vkb-wrap.light .vkb-key {
+    background: linear-gradient(180deg, #f0f0f4 0%, #d8d8dc 100%);
+    border-color: #c0c0c8;
+    color: #2a2d32;
+    box-shadow: 0 3px 0 #b4b6ba, 0 4px 8px rgba(0, 0, 0, 0.15);
+    text-shadow: none;
+  }
+
+  .vkb-wrap.light .vkb-key::before {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.6), transparent);
+  }
+
+  .vkb-wrap.light .vkb-key:hover {
+    background: linear-gradient(180deg, #fff 0%, #e8e8ec 100%);
+    border-color: #a0a0a8;
+  }
+
+  .vkb-wrap.light .vkb-key:active {
+    box-shadow: 0 1px 0 #b4b6ba, 0 2px 4px rgba(0, 0, 0, 0.15);
+  }
+
+  .vkb-wrap.light .vkb-key.enter {
+    background: linear-gradient(180deg, #3cb371 0%, #2e8b57 100%);
+    border-color: #4cd581;
+    color: #fff;
+    box-shadow: 0 3px 0 #1e6b3a, 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .vkb-wrap.light .vkb-key.back {
+    background: linear-gradient(180deg, #c44 0%, #a33 100%);
+    border-color: #d55;
+    color: #fff;
+    box-shadow: 0 3px 0 #822, 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .vkb-wrap.light .vkb-lang {
+    background: #c0c0c8;
+    border-color: #b0b0b8;
+    color: #2a2d32;
+  }
+
+  .vkb-wrap.light .vkb-lang:hover {
+    background: #d0d0d8;
+    border-color: #a0a0a8;
+  }
+
+  .vkb-wrap.light .vkb-mode-btn {
+    background: #c0c0c8;
+    border-color: #b0b0b8;
+    color: #2a2d32;
+  }
+
+  .vkb-wrap.light .vkb-mode-btn:hover {
+    background: #d0d0d8;
+  }
+
+  .vkb-wrap.light .vkb-close {
+    background: #c0c0c8;
+    border-color: #b0b0b8;
+    color: #2a2d32;
+  }
+
+  .vkb-wrap.light .vkb-close:hover {
+    background: var(--error);
+    color: #fff;
+    border-color: var(--error);
   }
 
   /* MUSIC PLAYER */
@@ -600,7 +957,6 @@
     50% { transform: translateX(-50%) translateY(-4px); }
   }
 
-  /* Copy feedback */
   .copy-feedback {
     position: fixed;
     bottom: 80px;
@@ -637,6 +993,16 @@
     .music-station-select {
       max-width: 120px;
     }
+    .search-wrapper {
+      flex-direction: column;
+    }
+    .search-btn {
+      width: 100%;
+    }
+    .vkb-toggle-btn {
+      width: 100%;
+      text-align: center;
+    }
   }
 
   @media (max-width: 600px) {
@@ -657,6 +1023,19 @@
       flex-direction: column;
       gap: 8px;
       align-items: center;
+    }
+    .vkb-key {
+      min-width: 28px;
+      height: 24px;
+      font-size: 12px;
+      padding: 0 4px;
+    }
+    .vkb-key.wide {
+      min-width: 40px;
+      font-size: 10px;
+    }
+    .vkb-panel {
+      padding: 10px 10px 12px;
     }
   }
 
@@ -699,7 +1078,13 @@
     <h1>📺 <span>Streamingwebbplatser</span></h1>
     <p>En samling av streamingtjänster för film och TV-serier.<br>
     <span style="font-size:13px;color:var(--cream-dim);">Klicka på en webbplats för att öppna den i en ny flik.</span></p>
-    <input type="text" class="search-box" id="searchInput" placeholder="🔍 Sök bland webbplatser...">
+    
+    <div class="search-wrapper">
+      <input type="text" class="search-box" id="searchInput" placeholder="🔍 Sök på Google eller filtrera webbplatser...">
+      <button class="search-btn" id="googleSearchBtn">Sök på Google</button>
+      <button class="vkb-toggle-btn" id="vkbToggleBtn">⌨️ VKB: AV</button>
+    </div>
+
     <div class="stats">
       <span>🎬 <strong id="playerCount">0</strong> Spelare</span>
       <span>📂 <strong id="newtabCount">0</strong> Ny flik</span>
@@ -715,6 +1100,26 @@
     <span style="font-size:11px;">Uppdaterad: <span id="updateDate"></span></span>
   </div>
 
+</div>
+
+<!-- VIRTUAL KEYBOARD -->
+<div class="vkb-wrap" id="vkbWrap">
+  <div class="vkb-panel" id="vkbPanel">
+    <div class="vkb-head">
+      <div class="vkb-title">Tangentbord</div>
+      <div class="vkb-head-right">
+        <button class="vkb-mode-btn" id="vkbModeBtn" title="Växla ljust/mörkt läge">☀️ LJUS</button>
+        <div class="vkb-close" id="vkbClose" title="Stäng">✕</div>
+      </div>
+    </div>
+    <div class="vkb-langs" id="vkbLangs">
+      <button class="vkb-lang active" data-lang="en">EN</button>
+      <button class="vkb-lang" data-lang="fa">FA</button>
+      <button class="vkb-lang" data-lang="ckb">CKB</button>
+      <button class="vkb-lang" data-lang="ar">AR</button>
+    </div>
+    <div class="vkb-rows" id="vkbRows"></div>
+  </div>
 </div>
 
 <!-- MUSIC PLAYER -->
@@ -807,6 +1212,199 @@
     bulbsEl.appendChild(b);
   }
 
+  // === VIRTUAL KEYBOARD ===
+  var VKB_LAYOUTS = {
+    en: [
+      ['1','2','3','4','5','6','7','8','9','0'],
+      ['q','w','e','r','t','y','u','i','o','p'],
+      ['a','s','d','f','g','h','j','k','l'],
+      ['z','x','c','v','b','n','m'],
+      ['SPACE','BACK','ENTER']
+    ],
+    fa: [
+      ['۱','۲','۳','۴','۵','۶','۷','۸','۹','۰'],
+      ['ض','ص','ث','ق','ف','غ','ع','ه','خ','ح','ج','چ'],
+      ['ش','س','ی','ب','ل','ا','ت','ن','م','ک','گ'],
+      ['ظ','ط','ز','ر','ذ','د','پ','و','.','ژ','ئ'],
+      ['SPACE','BACK','ENTER']
+    ],
+    ckb: [
+      ['١','٢','٣','٤','٥','٦','٧','٨','٩','٠'],
+      ['ق','و','ە','ر','ت','ی','ئ','ع','ح','ه‍','پ','چ'],
+      ['ا','س','ش','د','ف','گ','ه','ژ','ک','ل','ڵ'],
+      ['ز','خ','ج','ڤ','ب','ن','م','ۆ','ێ','.','ڕ'],
+      ['SPACE','BACK','ENTER']
+    ],
+    ar: [
+      ['١','٢','٣','٤','٥','٦','٧','٨','٩','٠'],
+      ['ض','ص','ث','ق','ف','غ','ع','ه','خ','ح','ج','د'],
+      ['ش','س','ي','ب','ل','ا','ت','ن','م','ك','ط'],
+      ['ئ','ء','ؤ','ر','لا','ى','ة','و','ز','ظ','ذ'],
+      ['SPACE','BACK','ENTER']
+    ]
+  };
+
+  var vkbWrap = document.getElementById('vkbWrap');
+  var vkbRows = document.getElementById('vkbRows');
+  var vkbLangs = document.getElementById('vkbLangs');
+  var vkbClose = document.getElementById('vkbClose');
+  var vkbModeBtn = document.getElementById('vkbModeBtn');
+  var vkbToggleBtn = document.getElementById('vkbToggleBtn');
+  var searchInput = document.getElementById('searchInput');
+  var vkbEnabled = false;
+  var currentLang = 'en';
+  var vkbLightMode = localStorage.getItem('kuribaxi_vkb_light') === 'true';
+
+  function applyVkbMode() {
+    if (vkbLightMode) {
+      vkbWrap.classList.add('light');
+      vkbModeBtn.innerHTML = '🌙 MÖRK';
+    } else {
+      vkbWrap.classList.remove('light');
+      vkbModeBtn.innerHTML = '☀️ LJUS';
+    }
+  }
+
+  function toggleVkbMode() {
+    vkbLightMode = !vkbLightMode;
+    localStorage.setItem('kuribaxi_vkb_light', vkbLightMode ? 'true' : 'false');
+    applyVkbMode();
+  }
+
+  vkbModeBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    toggleVkbMode();
+  });
+
+  function renderVkb(lang) {
+    currentLang = lang;
+    var layout = VKB_LAYOUTS[lang];
+    vkbRows.innerHTML = '';
+    layout.forEach(function(row) {
+      var rowDiv = document.createElement('div');
+      rowDiv.className = 'vkb-row';
+      row.forEach(function(key) {
+        var btn = document.createElement('div');
+        btn.className = 'vkb-key';
+        if (key === 'SPACE') {
+          btn.className += ' space wide';
+          btn.textContent = '␣';
+        } else if (key === 'BACK') {
+          btn.className += ' back wide';
+          btn.textContent = '⌫';
+        } else if (key === 'ENTER') {
+          btn.className += ' enter wide';
+          btn.textContent = '↵';
+        } else {
+          btn.textContent = key;
+        }
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          vkbPress(key);
+        });
+        rowDiv.appendChild(btn);
+      });
+      vkbRows.appendChild(rowDiv);
+    });
+    vkbLangs.querySelectorAll('.vkb-lang').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.lang === lang);
+    });
+  }
+
+  function vkbPress(key) {
+    if (!vkbEnabled) return;
+    var start = searchInput.selectionStart || searchInput.value.length;
+    var end = searchInput.selectionEnd || searchInput.value.length;
+    var val = searchInput.value;
+    if (key === 'SPACE') {
+      searchInput.value = val.slice(0, start) + ' ' + val.slice(end);
+      searchInput.selectionStart = searchInput.selectionEnd = start + 1;
+    } else if (key === 'BACK') {
+      if (start === end && start > 0) {
+        searchInput.value = val.slice(0, start - 1) + val.slice(end);
+        searchInput.selectionStart = searchInput.selectionEnd = start - 1;
+      } else if (start !== end) {
+        searchInput.value = val.slice(0, start) + val.slice(end);
+        searchInput.selectionStart = searchInput.selectionEnd = start;
+      }
+    } else if (key === 'ENTER') {
+      doGoogleSearch();
+      return;
+    } else {
+      searchInput.value = val.slice(0, start) + key + val.slice(end);
+      searchInput.selectionStart = searchInput.selectionEnd = start + key.length;
+    }
+    searchInput.focus();
+    // Trigger search/filter
+    var event = new Event('input');
+    searchInput.dispatchEvent(event);
+  }
+
+  function toggleVkb() {
+    vkbEnabled = !vkbEnabled;
+    if (vkbEnabled) {
+      vkbWrap.classList.add('open');
+      vkbToggleBtn.textContent = '⌨️ VKB: PÅ';
+      vkbToggleBtn.classList.add('active');
+      searchInput.disabled = false;
+      searchInput.focus();
+      renderVkb(currentLang);
+    } else {
+      vkbWrap.classList.remove('open');
+      vkbToggleBtn.textContent = '⌨️ VKB: AV';
+      vkbToggleBtn.classList.remove('active');
+    }
+  }
+
+  vkbToggleBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    toggleVkb();
+  });
+
+  vkbClose.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (vkbEnabled) toggleVkb();
+  });
+
+  vkbLangs.addEventListener('click', function(e) {
+    var btn = e.target.closest('.vkb-lang');
+    if (!btn) return;
+    renderVkb(btn.dataset.lang);
+  });
+
+  // Close VKB when clicking outside
+  document.addEventListener('click', function(e) {
+    if (vkbEnabled && !vkbWrap.contains(e.target) && e.target !== vkbToggleBtn) {
+      // Don't auto-close, user must toggle off
+    }
+  });
+
+  // When search input is focused and VKB is enabled, keep it
+  searchInput.addEventListener('focus', function() {
+    if (vkbEnabled) {
+      vkbWrap.classList.add('open');
+    }
+  });
+
+  applyVkbMode();
+  renderVkb('en');
+
+  // === GOOGLE SEARCH ===
+  function doGoogleSearch() {
+    var query = searchInput.value.trim();
+    if (!query) return;
+    var url = 'https://www.google.com/search?q=' + encodeURIComponent(query);
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+
+  document.getElementById('googleSearchBtn').addEventListener('click', doGoogleSearch);
+
+  searchInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !vkbEnabled) {
+      doGoogleSearch();
+    }
+  });
+
   // === WEBBPLATSER ===
   var WEBSITES = [
     // --- Player (grön) ---
@@ -846,7 +1444,6 @@
     { name: 'Farshub', url: 'https://monclerjakkejacket.com/farshub-2/', icon: '🇮🇷', type: 'persian' },
   ];
 
-  // Sortera: Player först, sedan New tab, sedan Persiska
   var typeOrder = { player: 0, newtab: 1, persian: 2 };
   WEBSITES.sort(function(a, b) {
     return typeOrder[a.type] - typeOrder[b.type];
@@ -864,7 +1461,6 @@
     persian: 'red'
   };
 
-  // Räkna per typ
   var counts = { player: 0, newtab: 0, persian: 0 };
   WEBSITES.forEach(function(site) {
     counts[site.type] = (counts[site.type] || 0) + 1;
@@ -875,14 +1471,12 @@
   document.getElementById('persianCount').textContent = counts.persian;
   document.getElementById('totalCount').textContent = WEBSITES.length;
 
-  // Sätt uppdateringsdatum
   document.getElementById('updateDate').textContent = new Date().toLocaleDateString('sv-SE', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
   });
 
-  // Bygg webbplatserna
   var container = document.getElementById('siteContainer');
 
   function renderSites(type) {
@@ -931,13 +1525,11 @@
       card.appendChild(info);
       card.appendChild(arrow);
 
-      // Klicka för att öppna i ny flik
       card.addEventListener('click', function(e) {
         e.preventDefault();
         window.open(site.url, '_blank', 'noopener,noreferrer');
       });
 
-      // Högerklicka för att kopiera URL
       card.addEventListener('contextmenu', function(e) {
         e.preventDefault();
         navigator.clipboard.writeText(site.url).then(function() {
@@ -972,13 +1564,11 @@
     container.appendChild(section);
   }
 
-  // Rendera i ordning
   renderSites('player');
   renderSites('newtab');
   renderSites('persian');
 
-  // Sökfunktion
-  var searchInput = document.getElementById('searchInput');
+  // Filtrera webbplatser
   searchInput.addEventListener('input', function() {
     var query = this.value.toLowerCase().trim();
     var cards = document.querySelectorAll('.site-card');
@@ -1145,7 +1735,6 @@
     musicTrackStation.textContent = MUSIC_STATIONS[currentStation].desc;
   });
 
-  // Init music
   loadStation(currentStation);
   musicVolume.value = parseInt(localStorage.getItem('kuribaxi_music_vol') || '70');
   setVolume(parseInt(musicVolume.value));
